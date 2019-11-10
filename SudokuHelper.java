@@ -1,4 +1,3 @@
-
 import java.util.BitSet;
 public class SudokuHelper {
 	public final String HORIZONTALSEP = "+-------+-------+-------+";

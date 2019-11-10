@@ -1,4 +1,3 @@
-
 import java.util.Scanner;
 import java.util.BitSet;
 import java.io.File;
