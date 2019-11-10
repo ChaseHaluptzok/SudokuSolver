@@ -29,7 +29,7 @@ public class SudokuHelper {
 				update = true;
 				printOutLogic();
 			}
-			if(hiddenSingle()){		
+			if(!update && hiddenSingle()){		
 				update = true;
 				printOutLogic();
 			}
@@ -39,6 +39,7 @@ public class SudokuHelper {
 		for(int i = 0; i < 9; i++){
 			for(int j = 0; j < 9; j++){
 				if((board[i][j].cardinality() == 2) && (!board[i][j].get(9))){
+                    nakedDoubleHelper(i,j);
 					for(int u = 0; u < 9; u++){
 						if((u != i) && (board[u][j].equals(board[i][j]))){
 							nakedDoubleFoundHelper(i, j, u)
@@ -47,6 +48,9 @@ public class SudokuHelper {
 				}
 			}
 		}
+	}
+    public boolean nakedDoubleHelper(int i, int j, int double1, int double2){
+		
 	}*/
 	public boolean hiddenSingle(){
 		for(int i = 0; i < 9; i++){
@@ -78,7 +82,9 @@ public class SudokuHelper {
 					return hiddenSingleResolver(i,j,curr);
 				}
 			}for(int u = 0; u < 9; u++){
-				if((board[3*(i/3)+u/3][3*(j/3)+u%3].get(curr)) && (u != i) && (u != j))
+                //System.out.printf("Looking at cell(r,c): (%d,%d); candidate: %d;\n",i+1,j+1,curr+1);
+                //System.out.printf("Comparing against:    (%d,%d); candidate: %b;\n\n",3*(i/3)+u/3+1,3*(j/3)+u%3+1,(board[3*(i/3)+u/3][3*(j/3)+u%3].get(curr)));
+				if((board[3*(i/3)+u/3][3*(j/3)+u%3].get(curr)) && ((u != i) || (u != j)))
 					break;
 				if(u == 8){			
 					System.out.printf("hidden single %d found in cell(r,c): (%d,%d); via box \n", curr+1, i+1, j+1);
