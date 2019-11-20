@@ -165,11 +165,9 @@ public class SudokuHelper {
 		return true;
 	}
 	public boolean nakedSingle(){
-		//boolean ret = false; 
 		for(int i = 0; i < 9; i++){
 			for(int j = 0; j < 9; j++){
 				if(board[i][j].cardinality() == 1){
-					//ret = true;
 					board[i][j].set(9);
 					System.out.printf("naked single %d found in cell(r,c): (%d,%d)\n", board[i][j].nextSetBit(0)+1, i+1, j+1);
 					constrain(i,j,board[i][j].nextSetBit(0));
