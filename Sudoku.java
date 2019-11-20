@@ -26,6 +26,10 @@ public class Sudoku{
 				e.printStackTrace();
 			}
 			SudokuHelper test = new SudokuHelper(board);
+			//if input wants debug
+			//	test.solve(debug True)
+			//else
+			// 	test.solve(debug False)
 		}
 	}
 }
