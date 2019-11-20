@@ -1,2 +1,3 @@
-**/OutputExamples/*.in
+OutputExamples/*.in
 README.md
+Scripts/**.bat
