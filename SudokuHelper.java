@@ -1,4 +1,5 @@
 import java.util.BitSet;
+import java.util.Arrays;
 public class SudokuHelper {
 	public final String HORIZONTALSEP = "+-------+-------+-------+";
 	public final String HORIZONTALSEPLOG = "+-------------+-------------+-------------+";
@@ -28,15 +29,95 @@ public class SudokuHelper {
 			update = false;
 			if(nakedSingle()){
 				update = true;
-			}if(!update && hiddenSingle()){		
+			}else if(!update && hiddenSingle()){		
 				update = true;
-			}if(!update && nakedDouble()){
+			}else if(!update && nakedDouble()){
+				update = true;
+			}else if(!update && hiddenDouble()){
 				update = true;
 			}if(update){
 				printOutLogic();
 			}
 			stepOut++;
 		}
+	}
+	public boolean hiddenDouble(){
+		boolean ret = false;
+		int c1, c2;
+		for(int i = 0; i < 9; i++){
+			for(int j = 0; j < 9; j++){
+				if(!board[i][j].get(9) && board[i][j].cardinality()>2){
+					c1 = board[i][j].nextSetBit(0);
+					while(c1>-1 && c1<9){
+						c2 = board[i][j].nextSetBit(c1+1);
+						while(c2>-1 && c2<9){
+							if(hiddenDoubleHelper(i,j,c1,c2)){
+								return true;
+							}
+							c2 = board[i][j].nextSetBit(c2+1);
+						}
+						c1 = board[i][j].nextSetBit(c1+1);
+					}
+				}
+			}
+		}
+		return false;
+	}
+	public boolean hiddenDoubleHelper(int i, int j, int c1, int c2){
+		boolean ret = false;
+		int rowCount=0,colCount=0,boxCount=0;
+		int ru=-1,rv=-1,cu=-1,cv=-1,bu=-1,bv=-1;
+		for(int w = 0; w < 9; w++){
+			if(!board[w][j].get(9) && board[w][j].get(c1) && board[w][j].get(c2) && (w != i)){
+				rowCount++;
+				if(rowCount == 1){
+					ru = w;
+					rv = j;
+				}
+			}else if(!board[w][j].get(9) && (board[w][j].get(c1) || board[w][j].get(c2)) && (w != i)){rowCount = 2;}
+			
+			if(!board[i][w].get(9) && board[i][w].get(c1) && board[i][w].get(c2) && (w != j)){
+				colCount++;
+				if(colCount == 1){
+					cu = i;
+					cv = w;
+				}
+			}else if(!board[i][w].get(9) && (board[i][w].get(c1) || board[i][w].get(c2)) && (w != j)){colCount = 2;}
+			
+			if(!board[cbi(i,w)][cbj(j,w)].get(9) && board[cbi(i,w)][cbj(j,w)].get(c1) && board[cbi(i,w)][cbj(j,w)].get(c2) && !(cbi(i,w) == i && cbj(j,w) == j)){
+				boxCount++;
+				if(boxCount == 1){
+					bu = cbi(i,w);
+					bv = cbj(j,w);
+				}
+			}else if(!board[cbi(i,w)][cbj(j,w)].get(9) && (board[cbi(i,w)][cbj(j,w)].get(c1) || board[cbi(i,w)][cbj(j,w)].get(c2)) && !(cbi(i,w) == i && cbj(j,w) == j)){boxCount = 2;}
+		}
+		if(rowCount==1 && hiddenDoubleResolver(i,j,ru,rv,c1,c2,"row")){
+			ret = true;
+		}if(colCount==1 && hiddenDoubleResolver(i,j,cu,cv,c1,c2,"col")){
+			ret = true;
+		}if(boxCount==1 && hiddenDoubleResolver(i,j,bu,bv,c1,c2,"box")){
+			ret = true;
+		}
+		return ret;
+	}
+	public boolean hiddenDoubleResolver(int i, int j, int u, int v, int c1, int c2, String unit){
+		boolean ret = false;
+		System.out.printf("hidden double %d %d found in cells(r,c)/(r,c): (%d,%d)/(%d,%d); via "+unit+"\nclears:\n",c1+1,c2+1,i+1,j+1,u+1,v+1);
+		for(int w = 0; w < 9; w++){
+			if(board[i][j].get(w) && w != c1 && w != c2){
+				ret=true;
+				System.out.printf("\t%d in cell(r,c): (%d,%d)\n",w+1,i+1,j+1);
+				board[i][j].clear(w);
+			}
+		}for(int w = 0; w < 9; w++){
+			if(board[u][v].get(w) && w != c1 && w != c2){
+				ret=true;
+				System.out.printf("\t%d in cell(r,c): (%d,%d)\n",w+1,u+1,v+1);
+				board[u][v].clear(w);
+			}
+		}
+		return ret;
 	}
 	public boolean nakedDouble(){
 		for(int i = 0; i < 9; i++){
